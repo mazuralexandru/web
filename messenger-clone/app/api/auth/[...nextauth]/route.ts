@@ -1,9 +1,10 @@
 import bcrypt from "bcrypt";
 import NextAuth, { AuthOptions } from "next-auth";
-import { CredentialsProvider } from "next-auth/providers/credentials";
+import CredentialsProvider from "next-auth/providers/credentials";
 import GithubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
+
 import prisma from "@/app/libs/prismadb";
 
 export const authOptions: AuthOptions = {
@@ -25,8 +26,9 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid Credentials");
+          throw new Error("Invalid credentials");
         }
+
         const user = await prisma.user.findUnique({
           where: {
             email: credentials.email,
@@ -43,7 +45,7 @@ export const authOptions: AuthOptions = {
         );
 
         if (!isCorrectPassword) {
-          throw new Error("Invalid Credentials");
+          throw new Error("Invalid credentials");
         }
 
         return user;
